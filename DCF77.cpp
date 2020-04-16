@@ -32,14 +32,16 @@ using namespace Utils;
 /**
  * Constructor
  */
-DCF77::DCF77(int DCF77Pin, int DCFinterrupt, bool OnRisingFlank) 
+DCF77::DCF77(int DCF77Pin, int DCFinterrupt, int DCFBlinkPin, bool OnRisingFlank)
 {
 	dCF77Pin     = DCF77Pin;
 	dCFinterrupt = DCFinterrupt;	
+	dCFBlinkPin  = DCFBlinkPin;
 	pulseStart   = OnRisingFlank ? HIGH : LOW;
 	
 	if (!initialized) {  
-		pinMode(dCF77Pin, INPUT);	
+    pinMode(dCF77Pin, INPUT);
+    pinMode(dCFBlinkPin, OUTPUT);
 		initialize();
 	  }
 	initialized = true;
@@ -131,6 +133,7 @@ void DCF77::int0handler() {
 			Up = false;	 
 		}
 	}  
+	BlinkDebug(dCFBlinkPin, Up);
 }
 
 /**
@@ -270,7 +273,6 @@ bool DCF77::processBuffer(void) {
 	//  Calculate parities for checking buffer
 	calculateBufferParities();
 	tmElements_t time;
-	bool proccessedSucces;
 
 	struct DCF77Buffer *rx_buffer;
 	rx_buffer = (struct DCF77Buffer *)(unsigned long long)&processingBuffer;
@@ -334,12 +336,13 @@ int DCF77::getSummerTime(void)
 {
   return (CEST)?1:0;
 } 
-
 /**
  * Initialize parameters
  */
+/*
 int DCF77::dCF77Pin=0;
 int DCF77::dCFinterrupt=0;
+int DCF77::dCFBlinkPin=0;
 byte DCF77::pulseStart=HIGH;
 
 // Parameters shared between interupt loop and main loop
@@ -367,4 +370,4 @@ time_t DCF77::previousProcessingTimestamp=0;
 unsigned char DCF77::CEST=0;
 DCF77::ParityFlags DCF77::flags = {0,0,0,0};
 
-
+*/
